@@ -1,4 +1,4 @@
-package com.agenciacristal.crud.product;
+package com.agenciacristal.crud.product.model;
 
 import jakarta.persistence.*;
 

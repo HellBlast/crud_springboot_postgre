@@ -1,5 +1,7 @@
-package com.agenciacristal.crud.product;
+package com.agenciacristal.crud.product.service;
 
+import com.agenciacristal.crud.product.model.Product;
+import com.agenciacristal.crud.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,25 +24,36 @@ public class ProductService {
         return this.productRepository.findAll();
     }
 
+    public Optional<Product> getProduct(Long id){
+       return this.productRepository.findById(id);
+    }
+    
     public ResponseEntity<Object> newProduct(Product product) {
         Optional<Product> res = productRepository.findProductByName(product.getName());
         datos = new HashMap<>();
 
-        if(res.isPresent() && product.getId()==null){
+        if(res.isPresent()){
             datos.put("error", true);
-            datos.put("message", "Ya existe un porducto con ese nombre");
+            datos.put("message", "Ya existe un producto con ese nombre");
             return new ResponseEntity<>(
                     datos,
                     HttpStatus.CONFLICT
             );
         }
 
-        datos.put("menssage", "Se guardado con éxito");
-        if(product.getId()!=null){
-            datos.put("menssage", "Se actualizo con exito");
-        }
-
         productRepository.save(product);
+        datos.put("menssage", "Se guardado con éxito");
+        datos.put("dato", product);
+        return new ResponseEntity<>(
+                datos,
+                HttpStatus.CREATED
+        );
+    }
+
+    public ResponseEntity<Object> updateProduct(Product product) {
+        datos = new HashMap<>();
+        productRepository.save(product);
+        datos.put("menssage", "Se actualizo con exito");
         datos.put("dato", product);
         return new ResponseEntity<>(
                 datos,
